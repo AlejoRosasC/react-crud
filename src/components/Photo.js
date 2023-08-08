@@ -8,6 +8,8 @@ export default function Photo() {
 
     const [photos, setPhoto] = useState([])
     const [idPhoto, setIdPhoto] = useState('')
+
+    //Paginacion
     const [currentPage, setCurrentPage] = useState(0);
     const itemsPerPage = 3; // Define el número de filas por página
 
@@ -15,33 +17,36 @@ export default function Photo() {
     const offset = currentPage * itemsPerPage;
     const currentPhotos = photos.slice(offset, offset + itemsPerPage);
 
-  const handlePageChange = (selectedPage) => {
-    setCurrentPage(selectedPage.selected);
-  };
+    const handlePageChange = (selectedPage) => {
+        setCurrentPage(selectedPage.selected);
+    };
+    //Fin Paginacion
 
+
+    //Consulta las fotos del un usuario especifico por id
     const getPhotos =  (idPhoto) => {
         console.log("ejecutando...")
         axios.get(`${API}/fotosPorUsuario/${idPhoto}`)
         .then(response => {
-        // Una vez que se obtienen los datos de la API, actualizamos el estado del componente con la respuesta
         setPhoto(response.data);
         console.log(response.data)
         })
         .catch(error => {
-        // Manejo de errores en caso de que ocurra alguno
         console.error(error);
         });
     }
 
+    //Recupera el id del usuario a consultar
     const handleSubmit =  (e) => {
-        e.preventDefault();  //async hace referencia a que la funcion no va  adetener la ejecucion de la pagina
+        e.preventDefault(); 
         console.log(idPhoto)
         getPhotos(idPhoto);
     }
 
+    //Estilo de los subtitulos
     const boldTextStyle = {
         fontWeight: 'bold',
-        color: 'black', // Puedes ajustar el color aquí
+        color: 'black', 
         };
 
     return(

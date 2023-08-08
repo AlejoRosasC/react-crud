@@ -4,16 +4,14 @@ import axios from 'axios'
 const API = process.env.REACT_APP_API;
 
 export default function Users() {
-
-
     const [users, setUsers] = useState([]); 
 
 
-
+//Consulta los usuarios
     const getUsers = async () => {
         axios.get(`${API}/mostrarUsuarios`)
         .then(response => {
-        // Una vez que se obtienen los datos de la API, actualizamos el estado del componente con la respuesta
+        // Una vez que se obtienen los datos de la API, se actualiza el estado del componente con la respuesta
         setUsers(response.data);
         console.log(response.data)
         })
@@ -22,7 +20,8 @@ export default function Users() {
         console.error(error);
         });
     }
-
+    
+//Ejecuta la consulta una vez se utiliza el componente
     useEffect(() => {
         // Realizar la solicitud GET a la API para obtener los datos
         getUsers();

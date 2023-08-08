@@ -19,12 +19,10 @@ export default function Request() {
     const [PeticionDataReturn, setResultado] = useState('')
     const [PeticionId, setIdentificador] = useState('')
 
-    // DISENNO Y PAGINACION
-
+    //PAGINACION
     const [expanded, setExpanded] = useState(false); //Esta linea se utiliza para determinar el tamaño a visualizar de la peticion
     const [currentPage, setCurrentPage] = useState(0); //Esta linea se utiliza para mantener la cantidad de peticiones en una sola tabla
-    const itemsPerPage = 5;
-
+    const itemsPerPage = 5; //Define la cantidad de elementos en la tabla
 
     const pageCount = Math.ceil(requests.length / itemsPerPage);
     const offset = currentPage * itemsPerPage;
@@ -33,7 +31,8 @@ export default function Request() {
     const handlePageChange = (selectedPage) => {
         setCurrentPage(selectedPage.selected);
     };
-    
+
+    //Cantidad de informacion visible en la tabla
     const toggleExpand = () => {
         setExpanded(!expanded);
         };
@@ -42,25 +41,26 @@ export default function Request() {
         maxHeight: expanded ? 'none' : '70px',
         overflow: 'hidden',
         };
+    
 
+    // EXPORT BUTTON
     const exportButtonStyle = {
         padding: '10px 20px',
-        backgroundColor: '#007bff', // Color de fondo del botón (puedes cambiarlo)
-        color: '#fff', // Color del texto del botón (puedes cambiarlo)
+        backgroundColor: '#636363',
+        color: '#fff', 
         border: 'none',
         borderRadius: '4px',
         cursor: 'pointer',
         transition: 'background-color 0.3s ease', // Transición suave al cambiar el color de fondo
         };
-    
-    // FIN DISENNO Y PAGINACION
 
-    // EXPORT BUTTON
-    
-    const exportData = async () => {
+    //Funcion para la exportar los registros de peticiones
+    const exportData = async (requests) => {
+        // Crear una instancia de un libro de Excel y una hoja de trabajo.
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Data');
     
+        // Definir las columnas de la hoja de trabajo con sus encabezados y claves.
         worksheet.columns = [
             { header: 'Id', key: 'PeticionId' },
             { header: 'Fecha', key: 'PeticionDate' },
@@ -69,12 +69,16 @@ export default function Request() {
             { header: 'Resultado', key: 'PeticionDataReturn' }
         ];
     
+        // Agregar filas a la hoja de trabajo utilizando los datos proporcionados.
         requests.forEach(request => {
             worksheet.addRow(request);
         });
     
+        // Generar un búfer Excel y crear un objeto Blob para el archivo.
         const buffer = await workbook.xlsx.writeBuffer();
         const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    
+        // Descargar el archivo Blob como 'data.xlsx'.
         saveAs(blob, 'data.xlsx');
     };
     
@@ -85,7 +89,7 @@ export default function Request() {
     const getRequest = async () => {
         axios.get(`${API}/peticionApi`)
         .then(response => {
-        // Una vez que se obtienen los datos de la API, actualizamos el estado del componente con la respuesta
+        // Una vez que se obtienen los datos de la API, se actualiza el estado del componente con la respuesta
         setRequests(response.data);
         console.log(response.data)
         })
