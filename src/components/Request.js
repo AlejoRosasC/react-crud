@@ -1,6 +1,11 @@
-import React, {useEffect, useState, useCallback} from "react";
+import React, {useEffect, useState} from "react";
 import axios from 'axios'
 import ReactPaginate from 'react-paginate';
+
+
+import { saveAs } from 'file-saver';
+import ExcelJS from 'exceljs';
+
 
 const API = process.env.REACT_APP_API;
 
@@ -52,7 +57,26 @@ export default function Request() {
 
     // EXPORT BUTTON
     
-   
+    const exportData = async () => {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Data');
+    
+        worksheet.columns = [
+            { header: 'Id', key: 'PeticionId' },
+            { header: 'Fecha', key: 'PeticionDate' },
+            { header: 'Método', key: 'PeticionMethod' },
+            { header: 'Petición', key: 'PeticionConsult' },
+            { header: 'Resultado', key: 'PeticionDataReturn' }
+        ];
+    
+        requests.forEach(request => {
+            worksheet.addRow(request);
+        });
+    
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        saveAs(blob, 'data.xlsx');
+    };
     
     // FIN EXPORT BUTTON
 
@@ -238,7 +262,7 @@ export default function Request() {
                     />
                 </div>
                 <div>
-                    <button style={exportButtonStyle} >
+                    <button style={exportButtonStyle} onClick={exportData}>
                         Export Data
                     </button>
                 </div>
